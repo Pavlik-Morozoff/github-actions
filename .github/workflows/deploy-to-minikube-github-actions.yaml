@@ -4,20 +4,18 @@ on: [push]
   
 jobs:
   job1:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: build Node.js Docker Image and deploy to minikube
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: Start minikube
-      uses: medyagh/setup-minikube@master
+      uses: medyagh/setup-minikube@v0.4.0
     - name: Try the cluster !
       run: kubectl get pods -A
     - name: Build image
       run: |
-          export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
-          docker build -f ./Dockerfile -t devopshint/node-app:latest .
-          echo -n "verifying images:"
+          docker build -f ./Dockerfile -t devopshint/node-app:${{ github.sha }} .
           docker images         
     - name: Deploy to minikube
       run:
@@ -30,4 +28,9 @@ jobs:
     - name: Test service URLs
       run: |
           minikube service list
-          minikube service nodejs-app --url
+          SERVICE_STATUS=$(minikube service nodejs-app --url)
+          until curl "$SERVICE_STATUS"; do
+              echo "Service not started"
+              sleep 3
+          done
+          echo "Service started"
