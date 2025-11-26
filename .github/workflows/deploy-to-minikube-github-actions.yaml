@@ -29,7 +29,7 @@ jobs:
       run: |
           minikube service list
           SERVICE_STATUS=$(minikube service nodejs-app --url)
-          until curl "$SERVICE_STATUS"; do
+          until curl -fSs "$SERVICE_STATUS"; do
               echo "Service not started"
               sleep 3
           done
