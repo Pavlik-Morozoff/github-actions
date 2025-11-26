@@ -15,7 +15,7 @@ jobs:
     - name: Build image
       run: |
           eval $(minikube -p minikube docker-env)
-          docker build -f ./Dockerfile -t devopshint/node-app:${{ github.sha }} .
+          docker build -f ./Dockerfile -t node-app:${{ github.sha }} .
           docker images         
     - name: Deploy to minikube
       run:
