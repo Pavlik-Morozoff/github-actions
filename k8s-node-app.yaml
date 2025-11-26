@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: "devopshint/node-app:${{ github.sha }}"
+        image: "devopshint/node-app:latest"
+        imagePullPolicy: Never
         ports:
           - containerPort: 3000
 ---
