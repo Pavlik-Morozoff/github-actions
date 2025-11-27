@@ -16,7 +16,7 @@ jobs:
       run: |
           export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
-          docker build -f ./Dockerfile -t nodejs-app:${{ github.sha::7 }} .
+          docker build -f ./Dockerfile -t nodejs-app:${{ github.sha }} .
           docker images
     - name: Deploy to minikube
       run:
