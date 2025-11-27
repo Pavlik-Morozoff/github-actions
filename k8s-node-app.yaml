@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: nodejs-app:latest
+        image: nodejs-app:${{ github.sha }}
         ports:
           - containerPort: 3000
 ---
