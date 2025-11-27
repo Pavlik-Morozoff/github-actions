@@ -14,23 +14,22 @@ jobs:
       run: kubectl get pods -A
     - name: Build image
       run: |
+          export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
-      docker build -f ./Dockerfile -t nodejs-app:${{ github.sha::7 }} .
-          docker images        
+          docker build -f ./Dockerfile -t nodejs-app:${{ github.sha::7 }} .
+          docker images
     - name: Deploy to minikube
       run:
         kubectl apply -f k8s-node-app.yaml
         kubectl wait --for=condition=ready pod -l app=nodejs-app
     - name: Wait for deployment to be ready
       run: |
+        kubectl set image deployment/nodejs-app nodejs-app=devopshint/node-app:latest
         kubectl rollout status deployment/nodejs-app --timeout=180s
         kubectl get pods -o wide
     - name: Test service URLs
       run: |
           minikube service list
-          SERVICE_STATUS=$(minikube service nodejs-app --url)
-          until curl -fSs "$SERVICE_STATUS"; do
-              echo "Service not started"
-              sleep 3
-          done
-          echo "Service started"
+          URL=$(minikube service nodejs-app --url | head -1)
+          until curl -f -s $URL >/dev/null; do sleep 1; printf "."; done
+          echo -e "\nApp is UP! $URL"
