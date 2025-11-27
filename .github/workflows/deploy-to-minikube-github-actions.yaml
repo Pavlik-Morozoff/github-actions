@@ -19,7 +19,7 @@ jobs:
           docker build -f ./Dockerfile -t nodejs-app:${{ github.sha }} .
           docker images
     - name: Deploy to minikube
-      run:
+      run: |
         kubectl apply -f k8s-node-app.yaml
         kubectl wait --for=condition=ready pod -l app=nodejs-app
     - name: Wait for deployment to be ready
